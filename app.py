@@ -9,15 +9,21 @@ st.set_page_config(
   layout="wide"                 
 )
 
-df= pd.read_excel(
-  io='supermarkt_sales.xlsx',
-  engine='openpyxl',
-  sheet_name='Sales',
-  skiprows=3,
-  usecols='B:R',
-  nrows=1000,
-)
+@st.cache
+def get_data_from_excel():
+    df= pd.read_excel(
+      io='supermarkt_sales.xlsx',
+      engine='openpyxl',
+      sheet_name='Sales',
+      skiprows=3,
+      usecols='B:R',
+      nrows=1000,
+    )
+    # Add 'hour' column to dataframe for second barchart
+    df["hour"]=pd.to_datetime(df["Time"],format="%H:%M:%S").dt.hour
+    return df
 
+df=get_data_from_excel()
 
 # SIDEBAR
 st.sidebar.header("Please Filter Here:")
@@ -44,12 +50,11 @@ df_selection=df.query(
   "City== @city & Customer_type== @customer_type & Gender == @gender"
 )
 
-st.dataframe(df_selection)
 
 
 
 # MAINPAGE
-st.title(":bar_char: Sales Dashboard")
+st.title(":bar_chart: Sales Dashboard")
 st.markdown("##")
 
 
@@ -76,3 +81,55 @@ with right_column:
   st.subheader(f"US $ {average_sale_by_transaction}")
 
 st.markdown("---")
+
+
+
+
+
+
+
+# BARCHARTS
+
+# SALES BY PRODUCT LINE [BAR CHART]
+
+sales_by_product_line=(
+  df_selection.groupby(by=["Product line"]).sum()[["Total"]].sort_values(by="Total")
+)
+
+fig_product_sales = px.bar(
+    sales_by_product_line,
+    x="Total",
+    y=sales_by_product_line.index,
+    orientation="h",
+    title="<b>Sales by Product Line</b>",
+    color_discrete_sequence=["#0083B8"] * len(sales_by_product_line),
+    template="plotly_white",
+)
+
+fig_product_sales.update_layout(
+    plot_bgcolor="rgba(0,0,0,0)",
+    xaxis=(dict(showgrid=False))
+)
+
+st.plotly_chart(fig_product_sales)
+
+# SALES BY HOUR [BAR CHART]
+
+sales_by_hour=df_selection.groupby(by=["hour"]).sum()[["Total"]]
+
+fig_hourly_sales=px.bar(
+    sales_by_hour,
+    x=sales_by_hour.index,
+    y="Total",
+    title="<b>Sales by Hour</b>",
+    color_discrete_sequence=["#0083B8"] * len(sales_by_hour),
+    template="plotly_white",
+)
+
+fig_hourly_sales.update_layout(
+    xaxis=dict(tickmode="linear"),
+    plot_bgcolor="rgba(0,0,0,0)",
+    yaxis=(dict(showgrid=False)),
+)
+
+
