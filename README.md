@@ -21,3 +21,9 @@ For detailed procedure, you can follow my article. It is a step by step process 
 
 Link : https://medium.com/@vishaltyagi.dev098/excel-sheet-interactive-dashboard-python-streamlit-114f7c240fc8
 
+## Inspiration 
+
+This project was motivated by Sven, a phenomenal Python programmer and data analyst, and his YouTube video. <br>
+The YouTube video - https://www.youtube.com/watch?v=Sb0A9i6d320 provided an excellent breakdown of each phase of this project. <br>
+Visit his YouTube channel — Coding Is Fun - https://www.youtube.com/@CodingIsFun , to view his other creative creations.
+
