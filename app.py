@@ -9,7 +9,7 @@ st.set_page_config(
   layout="wide"                 
 )
 
-@st.cache
+@st.cache_data
 def get_data_from_excel():
     df= pd.read_excel(
       io='supermarkt_sales.xlsx',
